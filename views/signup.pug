@@ -1,0 +1,30 @@
+doctype html
+head
+  title Create User
+  script(type='text/javascript').
+h1 Create User Form
+#container.col
+  form(method='post' action='')
+    div
+      div
+        | Username: 
+        input(name='username' type='text' value='')
+      br
+      div
+        | First Name: 
+        input(name='first_name' type='text' value='')
+      br
+      div
+        | Last Name: 
+        input(name='last_name' type='text' value='')
+      br
+      div
+        | Email: 
+        input(name='email' type='text' value='')
+      br
+      div
+        | Password: 
+        input(name='password' type='password' value='')
+      br
+    div
+      input(type='button' name='signup' value='Create User')
