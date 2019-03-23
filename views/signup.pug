@@ -4,7 +4,7 @@ head
   script(type='text/javascript').
 h1 Create User Form
 #container.col
-  form(method='post' action='')
+  form(method='post' action='/user/signup')
     div
       div
         | Username: 
@@ -27,4 +27,4 @@ h1 Create User Form
         input(name='password' type='password' value='')
       br
     div
-      input(type='button' name='signup' value='Create User')
+      input(type='submit' name='signup' value='Create User')

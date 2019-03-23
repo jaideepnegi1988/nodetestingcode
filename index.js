@@ -7,10 +7,28 @@ var cookiePaser = require("cookie-parser");
 var session = require("express-session");
 const configSetting = require("./config/config.json");
 
+
 const os = require("os");
 const net = require("net");
 
+
+//app.use(express.static(__dirname + '/public'));
+
 //console.log(net.createConnection());
+
+//--Application level middleware function for authentication
+const authMiddleWare = function(req,res,next){
+	let status = true;
+	if(status){
+		next();
+	}else{
+		res.json({'status':'api not allowed testing'});
+	}
+}
+
+app.use(authMiddleWare);
+//-- end of application level middleware
+
 
 process.app_path = __dirname;
 
@@ -91,12 +109,36 @@ app.get('/clearsession',function(req,res){
 	res.send("session cleared");
 });
 
+
+//Route level middle ware function
+app.get('/middleware_execution',function(req,res,next){
+	console.log("kamal");
+	//res.json({'name': 'kamal'});
+	next()
+},
+function(req,res,next){
+	console.log(req.hostname+'---'+req.path+'---'+req.url +'---'+ req.method);
+	next()
+},
+function(req,res,next){
+	console.log("function 5");
+	next()
+},
+function(req,res,next){
+	console.log("function 6");
+	res.json({'name':'jaideep'});
+});
+
 // End Session
 
-// jwt token system
+// Send emails in express
+app.get('/sendemail',function(req,res){
+	res.send('testing email');
+});
 
 
 app.get('*', function(req, res){
+	//res.redirect("user/login");
    res.send('Sorry, this is an invalid URL.');
 });
 

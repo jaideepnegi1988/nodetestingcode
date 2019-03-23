@@ -1,5 +1,9 @@
 const fs = require('fs');
 const jwt  = require('jsonwebtoken');
+var payload = {
+	'user_id': 'jnegi123',
+	'username': 'testing_user'
+};
 const signoption = {
 		issuer: 'mytestjwt',
 		subject: 'for generation jwt token',
@@ -14,9 +18,9 @@ const verifyOptions = {
 		algorithm:  "[RS256]"
 };
 
-const jwttoken = function(user_id){
+const jwttoken = function(){
 	var privateKEY  = fs.readFileSync(process.app_path+'/config/jwt_private.key', 'utf8');
-	return jwt.sign({'user_id': user_id}, privateKEY,signoption);
+	return jwt.sign(payload, privateKEY,signoption);
 }
 
 //validate a token from user, if token get expired it will generate 
@@ -27,16 +31,27 @@ const validateToken = function(token){
 		return {'token_status': 200, 'message': 'token verfied' , 'token': jwt.verify(token, publicKey, verifyOptions)}
 	}catch(error){
 		if(error.name == 'TokenExpiredError'){
-			let login_status = true;
+			previous_paylod = decodeToken(token);
+			payload.user_id = previous_paylod.payload.user_id;
+			payload.username = previous_paylod.payload.username;
+			//console.log(payload);
+			return {'token_status' : 403, 'message': 'token regenerated', 'token': jwttoken()};
+			/*let login_status = false;
 			if(login_status){
-				return {'token_status' : 403, 'message': 'token regenerated', 'token': jwttoken('jnegi1988')};
+				return {'token_status' : 403, 'message': 'token regenerated', 'token': jwttoken('jnegi123')};
 			}else{
 				return {'token_status' : 404, 'message': 'Please login again'};
-			}
+			}*/
 		} else{
 			return {'token_status' : 404, 'message': 'Something went wrong'};
 		}
 	}
 }
 
-module.exports = {'jwstoken': jwttoken, 'validateToken': validateToken };
+const decodeToken = function(token){
+	return jwt.decode(token, {complete: true});
+}
+
+
+
+module.exports = {'jwstoken': jwttoken, 'validateToken': validateToken, 'decodeToken': decodeToken};

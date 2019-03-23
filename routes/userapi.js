@@ -1,7 +1,21 @@
 var express = require('express');
+var app = express();
 var router = express.Router();
 var connectionPool = require("../config/connection.js");
 var jwtModel = require("../models/tokenjws.js");
+
+
+const apiauthMiddleWare = function(req,res,next){
+	let status = true;
+	if(status){
+		next();
+	}else{
+		res.json({'status':'api not allowed'});
+	}
+}
+
+router.use(apiauthMiddleWare);
+
 
 
 router.get('/getcountry',function(req,res){
@@ -37,23 +51,16 @@ router.get('/apitoken/:userid',function(req,res){
 });
 
 router.get('/tokenstatus',function(req,res){
-	let token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiam5lZ2kxOTg4IiwiaWF0IjoxNTUyNTU0Mzk1LCJleHAiOjE1NTI1NTQ2OTUsImlzcyI6Im15dGVzdGp3dCIsInN1YiI6ImZvciBnZW5lcmF0aW9uIGp3dCB0b2tlbiJ9.QDScsQpRoJhjK6sDa3b1PVRbsBAiP5mcJaT1TPXrVHTUgQm2VUOTaMihFoZ7TGPoaE-1EeV0kzeVjyDm247hLUDebq7yo9Go_nE67Sca3sdRmrpK_VNbfGapPrq-4Lsetn3fZaQMv9rjjM2TE4gMbS1wZhQ60GfebIPR18dwBGo';
+	let token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiam5lZ2kxMjMiLCJ1c2VybmFtZSI6InRlc3RpbmdfdXNlciIsImlhdCI6MTU1MzA3MjQyNSwiZXhwIjoxNTUzMDcyNzI1LCJpc3MiOiJteXRlc3Rqd3QiLCJzdWIiOiJmb3IgZ2VuZXJhdGlvbiBqd3QgdG9rZW4ifQ.SsSUWK7Lh7QNKXYr3_Qgn8aRg2klb5ac_c8WqAX9FBWtXnM4lsOy3VR9hWw8bobpXODKZIqEYlfDa1v62Hv4tRmthaf_DnHSXz9t2CQfinM9-iNNx6SOi9Cz3Ql9pgZbP2fHXlXvtnlhimsxcjeF4fB_unkOnTWid1US2AttOTE';
 	const validate_response = jwtModel.validateToken(token);
 	res.setHeader('Content-Type', 'application/json');
 	res.json(validate_response);
-	/*if(token_status == 200){
-		res.json({
-			'status' : 404,
-			'message': 'expired',
-		});
-	}else{
-		res.json({
-			'status': 200,
-			'message': 'Token verified',
-			'token': validate_response
-		});
-	}*/
-	
+});
+
+
+router.get('/tokendecode',function(req,res){
+	let token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiam5lZ2kxMjMiLCJ1c2VybmFtZSI6InRlc3RpbmdfdXNlciIsImlhdCI6MTU1MzA3MjQyNSwiZXhwIjoxNTUzMDcyNzI1LCJpc3MiOiJteXRlc3Rqd3QiLCJzdWIiOiJmb3IgZ2VuZXJhdGlvbiBqd3QgdG9rZW4ifQ.SsSUWK7Lh7QNKXYr3_Qgn8aRg2klb5ac_c8WqAX9FBWtXnM4lsOy3VR9hWw8bobpXODKZIqEYlfDa1v62Hv4tRmthaf_DnHSXz9t2CQfinM9-iNNx6SOi9Cz3Ql9pgZbP2fHXlXvtnlhimsxcjeF4fB_unkOnTWid1US2AttOTE';
+	res.json(jwtModel.decodeToken(token));
 });
 
 
